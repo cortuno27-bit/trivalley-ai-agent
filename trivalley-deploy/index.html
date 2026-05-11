@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tri-Valley AI Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+
+/* ═══════════════════════════════
+   DARK THEME
+═══════════════════════════════ */
+[data-theme="dark"] {
+  --bg:          #0E0E0E;
+  --surface:     #161616;
+  --surface2:    #1E1E1E;
+  --surface3:    #252525;
+  --gold:        #C9A84C;
+  --gold-lt:     #E0BC6E;
+  --gold-pale:   rgba(201,168,76,0.08);
+  --gold-border: rgba(201,168,76,0.20);
+  --gold-border2:rgba(201,168,76,0.08);
+  --gold-glow:   rgba(201,168,76,0.15);
+  --mid:         #333333;
+  --muted:       #6B6B6B;
+  --text:        #F0EDE6;
+  --text2:       #A8A49C;
+  --input-bg:    #111111;
+  --out-bg:      #0C0C0C;
+  --ok-bg:rgba(74,200,140,0.08); --ok-fg:#4AC88C;
+  --pend-bg:rgba(201,168,76,0.08); --pend-fg:#C9A84C;
+  --err-bg:rgba(200,60,60,0.08); --err-fg:#E08080; --err-border:rgba(200,60,60,0.25);
+  --btn-text:#0E0E0E;
+  --scrollbar:#2A2A2A;
+}
+
+/* ═══════════════════════════════
+   LIGHT THEME
+═══════════════════════════════ */
+[data-theme="light"] {
+  --bg:          #F7F5F0;
+  --surface:     #FFFFFF;
+  --surface2:    #F2EFE8;
+  --surface3:    #EAE6DD;
+  --gold:        #9A6F1A;
+  --gold-lt:     #B8882A;
+  --gold-pale:   rgba(154,111,26,0.07);
+  --gold-border: rgba(154,111,26,0.22);
+  --gold-border2:rgba(154,111,26,0.10);
+  --gold-glow:   rgba(154,111,26,0.12);
+  --mid:         #CCCCCC;
+  --muted:       #8A8880;
+  --text:        #1A1A14;
+  --text2:       #5A5650;
+  --input-bg:    #FFFFFF;
+  --out-bg:      #FAFAF7;
+  --ok-bg:rgba(30,140,80,0.08); --ok-fg:#1A7A40;
+  --pend-bg:rgba(154,111,26,0.08); --pend-fg:#9A6F1A;
+  --err-bg:rgba(180,40,40,0.07); --err-fg:#B02020; --err-border:rgba(180,40,40,0.20);
+  --btn-text:#FFFFFF;
+  --scrollbar:#DDDBD4;
+}
+
+/* ═══════════════════════════════
+   RESET & BASE
+═══════════════════════════════ */
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 16px;
+  line-height: 1.65;
+  transition: background 0.3s, color 0.3s;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 3px; }
+
+/* ═══════════════════════════════
+   LAYOUT
+═══════════════════════════════ */
+.app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 28px 100px;
+}
+
+/* ═══════════════════════════════
+   HEADER
+═══════════════════════════════ */
+header {
+  padding: 44px 0 32px;
+  border-bottom: 1px solid var(--gold-border);
+  margin-bottom: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  transition: border-color 0.3s;
+}
+
+.logo { display: flex; align-items: center; gap: 14px; }
+
+.logo-mark {
+  width: 40px; height: 40px;
+  border: 1.5px solid var(--gold-border);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--gold-pale);
+  flex-shrink: 0;
+  transition: all 0.3s;
+}
+.logo-mark svg { width: 20px; height: 20px; fill: none; stroke: var(--gold); stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+.logo-text {}
+.logo-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px; font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.2px; line-height: 1.1;
+  transition: color 0.3s;
+}
+.logo-tagline {
+  font-size: 11px; color: var(--muted);
+  letter-spacing: 2px; text-transform: uppercase;
+  font-weight: 400; margin-top: 3px;
+  transition: color 0.3s;
+}
+
+.header-right { display: flex; align-items: center; gap: 10px; }
+
+.badge {
+  font-size: 11px; font-weight: 500;
+  background: var(--gold-pale);
+  color: var(--gold);
+  border: 1px solid var(--gold-border);
+  padding: 6px 14px; border-radius: 20px;
+  letter-spacing: 0.3px;
+  transition: all 0.3s;
+}
+
+/* Theme toggle */
+.theme-btn {
+  width: 42px; height: 24px;
+  background: var(--surface3);
+  border: 1px solid var(--gold-border2);
+  border-radius: 12px;
+  position: relative; cursor: pointer;
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+.theme-btn:hover { border-color: var(--gold-border); }
+.theme-knob {
+  width: 16px; height: 16px;
+  background: var(--gold);
+  border-radius: 50%;
+  position: absolute; top: 3px; left: 3px;
+  transition: transform 0.3s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+[data-theme="light"] .theme-knob { transform: translateX(18px); }
+.theme-label { font-size: 11px; color: var(--muted); cursor: pointer; user-select: none; }
+
+/* ═══════════════════════════════
+   TABS
+═══════════════════════════════ */
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 36px;
+}
+
+.tab {
+  padding: 16px 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--gold-border2);
+  background: var(--surface);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.tab::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.2s;
+}
+.tab:hover { border-color: var(--gold-border); background: var(--surface2); transform: translateY(-1px); }
+.tab:hover::after { transform: scaleX(0.4); }
+.tab.active { border-color: var(--gold-border); background: var(--gold-pale); }
+.tab.active::after { transform: scaleX(1); }
+
+.tab-icon { font-size: 22px; margin-bottom: 7px; }
+.tab-label { font-size: 12.5px; font-weight: 500; color: var(--text2); display: block; transition: color 0.2s; }
+.tab.active .tab-label { color: var(--gold); }
+.tab-desc { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* ═══════════════════════════════
+   PANELS
+═══════════════════════════════ */
+.panel { display: none; }
+.panel.active { display: block; animation: fadeUp 0.25s ease; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.panel-header { margin-bottom: 24px; }
+.panel-header h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px; font-weight: 600;
+  color: var(--text); margin-bottom: 6px;
+  letter-spacing: -0.2px;
+  transition: color 0.3s;
+}
+.panel-header p { font-size: 14px; color: var(--muted); font-weight: 300; }
+
+.panel-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media(max-width: 660px) { .panel-grid { grid-template-columns: 1fr; } }
+
+/* ═══════════════════════════════
+   CARDS
+═══════════════════════════════ */
+.card, .out-card {
+  background: var(--surface);
+  border: 1px solid var(--gold-border2);
+  border-radius: 12px;
+  padding: 24px;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.card-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px; font-weight: 600;
+  color: var(--gold);
+  margin-bottom: 18px;
+  display: flex; align-items: center; gap: 8px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--gold-border2);
+}
+
+/* ═══════════════════════════════
+   FORM
+═══════════════════════════════ */
+label {
+  font-size: 11px; font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.8px; text-transform: uppercase;
+  display: block; margin-bottom: 6px; margin-top: 14px;
+  transition: color 0.3s;
+}
+label:first-of-type { margin-top: 0; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+input, textarea, select {
+  width: 100%;
+  background: var(--input-bg);
+  border: 1px solid var(--gold-border2);
+  border-radius: 7px;
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px; font-weight: 300;
+  padding: 10px 13px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.3s, color 0.3s;
+  -webkit-appearance: none;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px var(--gold-pale);
+}
+textarea { resize: vertical; min-height: 84px; }
+select option { background: var(--input-bg); color: var(--text); }
+::placeholder { color: var(--muted); opacity: 1; font-style: italic; font-size: 13px; }
+
+.tone-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.tone-pill {
+  font-size: 12px; font-weight: 400;
+  padding: 5px 13px; border-radius: 20px;
+  border: 1px solid var(--gold-border2);
+  cursor: pointer; color: var(--muted); background: none;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.15s;
+}
+.tone-pill.selected { background: var(--gold-pale); border-color: var(--gold-border); color: var(--gold); }
+
+/* ═══════════════════════════════
+   BUTTON
+═══════════════════════════════ */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 20px; border-radius: 8px;
+  font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: all 0.2s;
+  border: none; width: 100%; margin-top: 18px;
+  letter-spacing: 0.2px;
+}
+.btn-gold { background: var(--gold); color: var(--btn-text); }
+.btn-gold:hover {
+  background: var(--gold-lt);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px var(--gold-glow);
+}
+.btn-gold:active { transform: none; box-shadow: none; }
+.btn-gold:disabled { background: var(--mid); color: var(--muted); cursor: not-allowed; transform: none; box-shadow: none; }
+
+.spinner {
+  width: 15px; height: 15px;
+  border: 2px solid rgba(0,0,0,0.2);
+  border-top-color: var(--btn-text);
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: none; flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading .spinner { display: block; }
+.loading .btn-text { display: none; }
+
+/* ═══════════════════════════════
+   OUTPUT
+═══════════════════════════════ */
+.out-tabs { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.otab {
+  font-size: 12px; padding: 5px 13px;
+  border-radius: 20px; border: 1px solid var(--gold-border2);
+  cursor: pointer; color: var(--muted); background: none;
+  font-family: 'Inter', sans-serif; transition: all 0.15s;
+}
+.otab.active { background: var(--gold-pale); border-color: var(--gold-border); color: var(--gold); }
+
+.out-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 10px;
+}
+.copy-btn {
+  font-size: 12px; color: var(--muted);
+  background: none; border: 1px solid var(--gold-border2);
+  padding: 5px 13px; border-radius: 20px;
+  cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.15s;
+}
+.copy-btn:hover { color: var(--gold); border-color: var(--gold-border); }
+
+.output-area {
+  width: 100%;
+  background: var(--out-bg);
+  border: 1px solid var(--gold-border2);
+  border-radius: 7px;
+  color: var(--text2);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px; font-weight: 300; line-height: 1.85;
+  padding: 14px 16px;
+  outline: none; resize: vertical; min-height: 210px;
+  transition: border-color 0.2s, color 0.2s, background 0.3s;
+  white-space: pre-wrap;
+}
+.output-area:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-pale); }
+.output-area.has-content { color: var(--text); border-color: var(--gold-border2); }
+.output-area::placeholder { color: var(--muted); font-style: italic; font-size: 13px; }
+
+.status-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11px; padding: 4px 11px; border-radius: 20px;
+  font-weight: 400;
+}
+.status-pill.ok   { background: var(--ok-bg); color: var(--ok-fg); }
+.status-pill.pend { background: var(--pend-bg); color: var(--pend-fg); }
+.dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+.dot.pulse { animation: pulse 1.5s ease infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+.error-box {
+  background: var(--err-bg); border: 1px solid var(--err-border);
+  border-radius: 7px; color: var(--err-fg);
+  font-size: 13px; padding: 12px 14px;
+  margin-top: 8px; display: none; line-height: 1.6;
+}
+
+/* ═══════════════════════════════
+   DIVIDER
+═══════════════════════════════ */
+.section-rule {
+  height: 1px;
+  background: var(--gold-border2);
+  margin: 4px 0 14px;
+}
+
+/* ═══════════════════════════════
+   FOOTER
+═══════════════════════════════ */
+footer {
+  text-align: center; font-size: 12px;
+  color: var(--muted); margin-top: 60px;
+  padding-top: 24px; border-top: 1px solid var(--gold-border2);
+  line-height: 1.8;
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="logo">
+    <div class="logo-mark">
+      <!-- House icon -->
+      <svg viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1V10.5z"/><path d="M9 22V12h6v10"/></svg>
+    </div>
+    <div class="logo-text">
+      <div class="logo-name">Tri-Valley AI Agent</div>
+      <div class="logo-tagline">Pleasanton · Dublin · Livermore</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="badge">Powered by Claude</div>
+    <div class="theme-btn" onclick="toggleTheme()" title="Toggle light / dark">
+      <div class="theme-knob"></div>
+    </div>
+    <span class="theme-label" onclick="toggleTheme()">
+      <span id="theme-label-text">☀️</span>
+    </span>
+  </div>
+</header>
+
+<!-- ── TABS ── -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab(0)">
+    <div class="tab-icon">🏡</div>
+    <span class="tab-label">Listing Writer</span>
+    <div class="tab-desc">MLS copy & social</div>
+  </div>
+  <div class="tab" onclick="switchTab(1)">
+    <div class="tab-icon">💬</div>
+    <span class="tab-label">Lead Follow-Up</span>
+    <div class="tab-desc">Instant replies</div>
+  </div>
+  <div class="tab" onclick="switchTab(2)">
+    <div class="tab-icon">📊</div>
+    <span class="tab-label">CMA Drafter</span>
+    <div class="tab-desc">Valuation letters</div>
+  </div>
+  <div class="tab" onclick="switchTab(3)">
+    <div class="tab-icon">⭐</div>
+    <span class="tab-label">Review Request</span>
+    <div class="tab-desc">Post-close emails</div>
+  </div>
+</div>
+
+<!-- ══ PANEL 0: LISTING WRITER ══ -->
+<div class="panel active" id="panel-0">
+  <div class="panel-header">
+    <h2>Listing Content Generator</h2>
+    <p>Enter property details — MLS description, social caption, and email blast ready in seconds.</p>
+  </div>
+  <div class="panel-grid">
+    <div class="card">
+      <div class="card-title"><span>🏡</span> Property Details</div>
+      <label>Address / Neighborhood</label>
+      <input type="text" id="l-address" placeholder="e.g. 123 Oak St, Pleasanton CA"/>
+      <div class="row2">
+        <div><label>Bedrooms</label><input type="number" id="l-beds" placeholder="4" min="1"/></div>
+        <div><label>Bathrooms</label><input type="number" id="l-baths" placeholder="3" min="1" step="0.5"/></div>
+      </div>
+      <div class="row2">
+        <div><label>Sq Footage</label><input type="text" id="l-sqft" placeholder="2,450 sqft"/></div>
+        <div><label>List Price</label><input type="text" id="l-price" placeholder="$1,295,000"/></div>
+      </div>
+      <label>Key Features (one per line)</label>
+      <textarea id="l-features" placeholder="Updated kitchen with quartz counters&#10;Primary suite with walk-in closet&#10;Solar panels, EV charger&#10;Pool & spa&#10;Top-rated Pleasanton schools&#10;3-car garage"></textarea>
+      <label>Tone</label>
+      <div class="tone-pills">
+        <button class="tone-pill selected" onclick="setTone(this,'l','luxury')">Luxury</button>
+        <button class="tone-pill" onclick="setTone(this,'l','friendly')">Friendly</button>
+        <button class="tone-pill" onclick="setTone(this,'l','investment')">Investment</button>
+        <button class="tone-pill" onclick="setTone(this,'l','family-focused')">Family</button>
+      </div>
+      <button class="btn btn-gold" id="l-btn" onclick="generateListing()">
+        <div class="spinner"></div><span class="btn-text">✦ Generate All Content</span>
+      </button>
+    </div>
+    <div class="out-card">
+      <div class="card-title"><span>✦</span> Generated Output</div>
+      <div class="out-tabs">
+        <button class="otab active" onclick="switchOut('l','mls',this)">MLS Description</button>
+        <button class="otab" onclick="switchOut('l','social',this)">Social Caption</button>
+        <button class="otab" onclick="switchOut('l','email',this)">Email Blast</button>
+      </div>
+      <div class="section-rule"></div>
+      <div class="out-header"><span></span><button class="copy-btn" onclick="copyOut('l-out')">Copy</button></div>
+      <textarea class="output-area" id="l-out" placeholder="Fill in property details and click Generate. Your MLS description, social caption, and email blast will appear here — click to edit." oninput="save('l')"></textarea>
+      <div class="error-box" id="l-err"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PANEL 1: LEAD FOLLOW-UP ══ -->
+<div class="panel" id="panel-1">
+  <div class="panel-header">
+    <h2>Lead Follow-Up Generator</h2>
+    <p>A lead just came in. Generate a personalized instant response — never lose a lead to a slow reply again.</p>
+  </div>
+  <div class="panel-grid">
+    <div class="card">
+      <div class="card-title"><span>💬</span> Lead Info</div>
+      <label>Lead's Name</label>
+      <input type="text" id="f-name" placeholder="e.g. Sarah Johnson"/>
+      <label>How They Inquired</label>
+      <select id="f-source">
+        <option value="website contact form">Website contact form</option>
+        <option value="Zillow inquiry">Zillow inquiry</option>
+        <option value="open house signup">Open house signup</option>
+        <option value="missed phone call">Missed phone call</option>
+        <option value="Instagram DM">Instagram DM</option>
+        <option value="referral">Referral</option>
+      </select>
+      <label>Property / Area of Interest</label>
+      <input type="text" id="f-property" placeholder="e.g. 3BR homes in Dublin under $1.2M"/>
+      <label>Their Message (if any)</label>
+      <textarea id="f-message" placeholder="e.g. Hi, I'm interested in your listing on Maple Ave." style="min-height:70px;"></textarea>
+      <label>Your Name & Office</label>
+      <input type="text" id="f-agent" placeholder="e.g. Dan Gamache, Tri-Valley Home Search"/>
+      <label>Tone</label>
+      <div class="tone-pills">
+        <button class="tone-pill selected" onclick="setTone(this,'f','warm and personal')">Warm</button>
+        <button class="tone-pill" onclick="setTone(this,'f','professional and concise')">Professional</button>
+        <button class="tone-pill" onclick="setTone(this,'f','excited and energetic')">Excited</button>
+      </div>
+      <button class="btn btn-gold" id="f-btn" onclick="generateFollowup()">
+        <div class="spinner"></div><span class="btn-text">✦ Generate Follow-Up Messages</span>
+      </button>
+    </div>
+    <div class="out-card">
+      <div class="card-title"><span>✦</span> Response Messages</div>
+      <div class="out-tabs">
+        <button class="otab active" onclick="switchOut('f','sms',this)">SMS Text</button>
+        <button class="otab" onclick="switchOut('f','email',this)">Email</button>
+        <button class="otab" onclick="switchOut('f','voicemail',this)">Voicemail Script</button>
+      </div>
+      <div class="section-rule"></div>
+      <div class="out-header">
+        <div class="status-pill pend" id="f-status" style="display:none"><div class="dot pulse"></div>Ready to send</div>
+        <button class="copy-btn" onclick="copyOut('f-out')">Copy</button>
+      </div>
+      <textarea class="output-area" id="f-out" placeholder="Enter lead details to generate personalized SMS, email, and voicemail responses — all editable." oninput="save('f')"></textarea>
+      <div class="error-box" id="f-err"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PANEL 2: CMA DRAFTER ══ -->
+<div class="panel" id="panel-2">
+  <div class="panel-header">
+    <h2>CMA Letter Generator</h2>
+    <p>Turn comparable sales data into a professional valuation letter — edit inline before sending.</p>
+  </div>
+  <div class="panel-grid">
+    <div class="card">
+      <div class="card-title"><span>📊</span> Property & Comparables</div>
+      <label>Subject Property Address</label>
+      <input type="text" id="c-address" placeholder="e.g. 4521 Bernal Ave, Pleasanton CA"/>
+      <div class="row2">
+        <div><label>Beds / Baths</label><input type="text" id="c-beds" placeholder="4 bed / 2.5 bath"/></div>
+        <div><label>Square Footage</label><input type="text" id="c-sqft" placeholder="2,800 sqft"/></div>
+      </div>
+      <label>Property Highlights</label>
+      <textarea id="c-features" placeholder="Updated kitchen, large lot, pool, ADU, excellent school district" style="min-height:60px;"></textarea>
+      <label>Comparable Sales (address, price, date)</label>
+      <textarea id="c-comps" placeholder="1. 4600 Bernal Ave — $1,350,000 — sold 3/2026&#10;2. 4480 Hopyard Rd — $1,295,000 — sold 2/2026&#10;3. 300 Division St — $1,425,000 — sold 4/2026" style="min-height:88px;"></textarea>
+      <div class="row2">
+        <div><label>Suggested Price</label><input type="text" id="c-price" placeholder="$1,375,000"/></div>
+        <div><label>Agent Name</label><input type="text" id="c-agent" placeholder="Your Name"/></div>
+      </div>
+      <button class="btn btn-gold" id="c-btn" onclick="generateCMA()">
+        <div class="spinner"></div><span class="btn-text">✦ Draft CMA Letter</span>
+      </button>
+    </div>
+    <div class="out-card">
+      <div class="card-title"><span>✦</span> CMA Documents</div>
+      <div class="out-tabs">
+        <button class="otab active" onclick="switchOut('c','letter',this)">Full Letter</button>
+        <button class="otab" onclick="switchOut('c','summary',this)">Summary</button>
+        <button class="otab" onclick="switchOut('c','talking',this)">Talking Points</button>
+      </div>
+      <div class="section-rule"></div>
+      <div class="out-header"><span></span><button class="copy-btn" onclick="copyOut('c-out')">Copy</button></div>
+      <textarea class="output-area" id="c-out" placeholder="Enter property details and comparable sales. Claude will draft a professional CMA letter, executive summary, and talking points — all editable." oninput="save('c')"></textarea>
+      <div class="error-box" id="c-err"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PANEL 3: REVIEW REQUEST ══ -->
+<div class="panel" id="panel-3">
+  <div class="panel-header">
+    <h2>Review Request Automation</h2>
+    <p>Generate personalized post-close review requests. Heartfelt and editable before you send.</p>
+  </div>
+  <div class="panel-grid">
+    <div class="card">
+      <div class="card-title"><span>⭐</span> Client & Transaction Details</div>
+      <label>Client Name(s)</label>
+      <input type="text" id="r-client" placeholder="e.g. The Martinez Family"/>
+      <label>Property That Closed</label>
+      <input type="text" id="r-property" placeholder="e.g. 789 Vineyard Ave, Livermore CA"/>
+      <div class="row2">
+        <div><label>Transaction Type</label>
+          <select id="r-type"><option>Buyer</option><option>Seller</option><option>Both (buy & sell)</option></select>
+        </div>
+        <div><label>Days Since Close</label>
+          <select id="r-days"><option value="3">3 days</option><option value="7">1 week</option><option value="30">1 month</option></select>
+        </div>
+      </div>
+      <label>A Special Moment from the Transaction</label>
+      <textarea id="r-moment" placeholder="e.g. They cried happy tears when the seller accepted their offer after being outbid on 4 other homes. First-time buyers." style="min-height:70px;"></textarea>
+      <label>Your Name</label>
+      <input type="text" id="r-agent" placeholder="e.g. Natalie Swanson"/>
+      <label>Review Link (Google / Zillow)</label>
+      <input type="text" id="r-links" placeholder="https://g.page/r/your-google-review-link"/>
+      <button class="btn btn-gold" id="r-btn" onclick="generateReview()">
+        <div class="spinner"></div><span class="btn-text">✦ Generate Review Request</span>
+      </button>
+    </div>
+    <div class="out-card">
+      <div class="card-title"><span>✦</span> Review Request Messages</div>
+      <div class="out-tabs">
+        <button class="otab active" onclick="switchOut('r','email',this)">Email</button>
+        <button class="otab" onclick="switchOut('r','sms',this)">SMS Text</button>
+        <button class="otab" onclick="switchOut('r','followup',this)">Follow-up</button>
+      </div>
+      <div class="section-rule"></div>
+      <div class="out-header">
+        <div class="status-pill ok" id="r-status" style="display:none"><div class="dot"></div>Scheduled</div>
+        <button class="copy-btn" onclick="copyOut('r-out')">Copy</button>
+      </div>
+      <textarea class="output-area" id="r-out" placeholder="Enter client details and a personal moment from the transaction. The more specific, the more heartfelt and effective." oninput="save('r')"></textarea>
+      <div class="error-box" id="r-err"></div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Tri-Valley AI Agent &nbsp;·&nbsp; Pleasanton &nbsp;·&nbsp; Dublin &nbsp;·&nbsp; Livermore<br>
+  <span style="font-size:11px;opacity:0.5;">Powered by Claude &nbsp;·&nbsp; Review all outputs before sending</span>
+</footer>
+
+</div><!-- end .app -->
+
+<script>
+// ─── PROXY URL (no API key in this file) ──
+const PROXY_URL = '/.netlify/functions/proxy';
+// ──────────────────────────────────────────
+
+// ─── THEME ───────────────────────────────
+function toggleTheme() {
+  const html  = document.documentElement;
+  const dark  = html.getAttribute('data-theme') === 'dark';
+  const next  = dark ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('tvai-theme', next);
+  document.getElementById('theme-label-text').textContent = next === 'dark' ? '☀️' : '🌙';
+}
+(function () {
+  const saved = localStorage.getItem('tvai-theme');
+  if (saved) {
+    document.documentElement.setAttribute('data-theme', saved);
+    document.getElementById('theme-label-text').textContent = saved === 'dark' ? '☀️' : '🌙';
+  }
+})();
+
+// ─── STATE ───────────────────────────────
+const tones = { l: 'luxury', f: 'warm and personal' };
+const state = {
+  l: { tabs:{mls:'',social:'',email:''},    active:'mls'    },
+  f: { tabs:{sms:'',email:'',voicemail:''}, active:'sms'    },
+  c: { tabs:{letter:'',summary:'',talking:''},active:'letter'},
+  r: { tabs:{email:'',sms:'',followup:''},  active:'email'  },
+};
+
+// ─── NAVIGATION ──────────────────────────
+function switchTab(i) {
+  document.querySelectorAll('.tab').forEach((t,j)   => t.classList.toggle('active', i===j));
+  document.querySelectorAll('.panel').forEach((p,j) => p.classList.toggle('active', i===j));
+}
+function setTone(btn, g, tone) {
+  tones[g] = tone;
+  btn.closest('.tone-pills').querySelectorAll('.tone-pill').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+function switchOut(g, tab, btn) {
+  state[g].tabs[state[g].active] = document.getElementById(g+'-out').value;
+  state[g].active = tab;
+  btn.closest('.out-tabs').querySelectorAll('.otab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const area = document.getElementById(g+'-out');
+  const c = state[g].tabs[tab];
+  area.value = c;
+  c ? area.classList.add('has-content') : area.classList.remove('has-content');
+}
+function save(g) { state[g].tabs[state[g].active] = document.getElementById(g+'-out').value; }
+
+// ─── COPY ────────────────────────────────
+function copyOut(id) {
+  const v = document.getElementById(id).value;
+  if (!v.trim()) return;
+  navigator.clipboard.writeText(v).then(() => {
+    const b = event.target;
+    b.textContent = 'Copied!';
+    setTimeout(() => b.textContent = 'Copy', 2000);
+  });
+}
+
+// ─── ERROR ───────────────────────────────
+function showError(g, msg) {
+  const el = document.getElementById(g+'-err');
+  el.textContent = msg; el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 10000);
+}
+
+// ─── API CALL ────────────────────────────
+async function callClaude(prompt, areaEl, btnEl, eg) {
+  btnEl.disabled = true; btnEl.classList.add('loading');
+  areaEl.value = ''; areaEl.classList.remove('has-content');
+  areaEl.placeholder = 'Generating…';
+
+  try {
+    const res = await fetch(PROXY_URL, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model:      'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages:   [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || data.error) {
+      const msg = data?.error?.message || data?.error || `HTTP ${res.status}`;
+      showError(eg, '⚠️ API error: ' + msg);
+      return '';
+    }
+
+    // Extract text from Anthropic response
+    const full = data?.content?.map(b => b.text || '').join('') || '';
+    areaEl.value = full;
+    if (full) areaEl.classList.add('has-content');
+    return full;
+
+  } catch (e) {
+    showError(eg, '⚠️ Network error: ' + e.message);
+    return '';
+  } finally {
+    areaEl.placeholder = '';
+    btnEl.disabled = false;
+    btnEl.classList.remove('loading');
+  }
+}
+
+function parse(t, h, nh) {
+  const rx = nh ? new RegExp(h+':\\n?([\\s\\S]*?)(?='+nh+':|$)') : new RegExp(h+':\\n?([\\s\\S]*?)$');
+  const m = t.match(rx); return m ? m[1].trim() : '';
+}
+function store(g, parsed, fb) {
+  Object.keys(parsed).forEach(k => state[g].tabs[k] = parsed[k]);
+  const area = document.getElementById(g+'-out');
+  area.value = state[g].tabs[state[g].active] || fb;
+  if (area.value) area.classList.add('has-content');
+}
+
+// ─── GENERATORS ──────────────────────────
+async function generateListing() {
+  const addr=document.getElementById('l-address').value||'Tri-Valley property',
+    beds=document.getElementById('l-beds').value||'4', baths=document.getElementById('l-baths').value||'3',
+    sqft=document.getElementById('l-sqft').value||'2,400 sqft', price=document.getElementById('l-price').value,
+    feat=document.getElementById('l-features').value||'Updated kitchen, great schools, large backyard';
+  state.l.tabs={mls:'',social:'',email:''};
+  const p=`You are a top real estate copywriter specializing in the Tri-Valley area of California. Write in a ${tones.l} tone.\n\nProperty: ${addr}\n${beds} bed / ${baths} bath, ${sqft}${price?', listed at '+price:''}\nKey features:\n${feat}\n\nGenerate THREE sections with these exact headers:\n\nMLS DESCRIPTION:\n150-200 word MLS listing description. Powerful opening, natural feature highlights, clear call to action.\n\nSOCIAL MEDIA CAPTION:\nUnder 150 words for Instagram/Facebook. 2-3 emojis. 5 hashtags including #TriValley.\n\nEMAIL BLAST:\nFirst line labeled "Subject:" then email body under 200 words. Friendly, compelling, clear call to action.`;
+  const full=await callClaude(p,document.getElementById('l-out'),document.getElementById('l-btn'),'l');
+  if(full)store('l',{mls:parse(full,'MLS DESCRIPTION','SOCIAL MEDIA CAPTION')||full,social:parse(full,'SOCIAL MEDIA CAPTION','EMAIL BLAST'),email:parse(full,'EMAIL BLAST',null)},full);
+}
+
+async function generateFollowup() {
+  const name=document.getElementById('f-name').value||'the lead',
+    src=document.getElementById('f-source').value,prop=document.getElementById('f-property').value||'homes in the Tri-Valley area',
+    msg=document.getElementById('f-message').value,agent=document.getElementById('f-agent').value||'Your Agent';
+  state.f.tabs={sms:'',email:'',voicemail:''};
+  document.getElementById('f-status').style.display='none';
+  const p=`You are a real estate agent in the Tri-Valley area. A new lead just came in. Respond immediately. Be ${tones.f}.\n\nLead: ${name} | Source: ${src} | Looking for: ${prop}\n${msg?'Their message: "'+msg+'"':''}\nYour name: ${agent}\n\nGenerate THREE responses with these exact headers:\n\nSMS TEXT:\nUnder 160 characters. Personal, friendly, references their name and interest. No links.\n\nEMAIL:\nSubject line labeled "Subject:" then a 3-paragraph body: thank them, acknowledge interest, offer next steps. Sign with agent name.\n\nVOICEMAIL SCRIPT:\n20-30 second voicemail. Natural, not salesy. Use [YOUR PHONE] as placeholder.`;
+  const full=await callClaude(p,document.getElementById('f-out'),document.getElementById('f-btn'),'f');
+  if(full){store('f',{sms:parse(full,'SMS TEXT','EMAIL')||full,email:parse(full,'EMAIL','VOICEMAIL SCRIPT'),voicemail:parse(full,'VOICEMAIL SCRIPT',null)},full);document.getElementById('f-status').style.display='inline-flex';}
+}
+
+async function generateCMA() {
+  const addr=document.getElementById('c-address').value||'Subject Property',
+    beds=document.getElementById('c-beds').value||'4 bed / 2.5 bath',sqft=document.getElementById('c-sqft').value||'2,800 sqft',
+    feat=document.getElementById('c-features').value||'Updated home',comps=document.getElementById('c-comps').value||'Comparable sales in the area',
+    price=document.getElementById('c-price').value||'to be determined',agent=document.getElementById('c-agent').value||'Your Agent';
+  state.c.tabs={letter:'',summary:'',talking:''};
+  const p=`You are a senior real estate agent in the Tri-Valley area preparing a CMA for a seller.\n\nProperty: ${addr} | ${beds}, ${sqft}\nFeatures: ${feat}\nComps:\n${comps}\nSuggested price: ${price}\nPrepared by: ${agent}\n\nGenerate THREE documents with these exact headers:\n\nFULL LETTER:\nProfessional 3-4 paragraph letter starting "Dear Valued Client,". Methodology, comp summary, price justification. Sign with agent name and "Tri-Valley Real Estate Specialist."\n\nEXECUTIVE SUMMARY:\n5 bullet points — one key CMA insight each. Concise and scannable.\n\nTALKING POINTS:\n6 talking points for presenting in person. Include one for handling a seller who thinks their home is worth more.`;
+  const full=await callClaude(p,document.getElementById('c-out'),document.getElementById('c-btn'),'c');
+  if(full)store('c',{letter:parse(full,'FULL LETTER','EXECUTIVE SUMMARY')||full,summary:parse(full,'EXECUTIVE SUMMARY','TALKING POINTS'),talking:parse(full,'TALKING POINTS',null)},full);
+}
+
+async function generateReview() {
+  const client=document.getElementById('r-client').value||'valued clients',
+    prop=document.getElementById('r-property').value||'their new home',
+    type=document.getElementById('r-type').value,days=document.getElementById('r-days').value,
+    moment=document.getElementById('r-moment').value,agent=document.getElementById('r-agent').value||'Your Agent',
+    link=document.getElementById('r-links').value||'[REVIEW LINK]';
+  state.r.tabs={email:'',sms:'',followup:''};
+  document.getElementById('r-status').style.display='none';
+  const p=`You are a real estate agent in the Tri-Valley area. You closed a transaction ${days} days ago. Ask for a review — genuine, warm, personal. Never pushy.\n\nClient: ${client} | Transaction: ${type} for ${prop}\n${moment?'Special moment: '+moment:''}\nAgent: ${agent} | Review link: ${link}\n\nGenerate THREE messages with these exact headers:\n\nEMAIL:\nSubject line labeled "Subject:" then a heartfelt 2-3 paragraph email. Reference the special moment. Gentle ask with the review link.\n\nSMS TEXT:\nUnder 160 characters. Warm and personal. Include the review link or [LINK].\n\nFOLLOW-UP (NO REPLY):\nOne paragraph follow-up for 2 weeks later. Acknowledge they've been busy settling in. Zero pressure.`;
+  const full=await callClaude(p,document.getElementById('r-out'),document.getElementById('r-btn'),'r');
+  if(full){store('r',{email:parse(full,'EMAIL','SMS TEXT')||full,sms:parse(full,'SMS TEXT','FOLLOW-UP'),followup:parse(full,'FOLLOW-UP[^:]*',null)},full);document.getElementById('r-status').style.display='inline-flex';}
+}
+</script>
+</body>
+</html>
