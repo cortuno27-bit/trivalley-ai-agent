@@ -4,7 +4,7 @@
 
 exports.handler = async function (event) {
   const cors = {
-    'Access-Control-Allow-Origin':  '*',
+    'Access-Control-Allow-Origin':  'https://tryvalleyagent.netlify.app',
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type',
   };
@@ -36,7 +36,7 @@ exports.handler = async function (event) {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model:      incoming.model      || 'claude-sonnet-4-20250514',
+        model:      incoming.model      || 'claude-sonnet-4-6',
         max_tokens: incoming.max_tokens || 1000,
         messages:   incoming.messages   || [],
       }),
