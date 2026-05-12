@@ -6,6 +6,10 @@
 <title>Tri-Valley AI Agent</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<!-- Favicon -->
+<link rel="icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png" />
 <style>
 
 /* ═══════════════════════════════
@@ -485,7 +489,7 @@ footer {
         <div><label>List Price</label><input type="text" id="l-price" placeholder="$1,295,000"/></div>
       </div>
       <label>Key Features (one per line)</label>
-      <textarea id="l-features" placeholder="Updated kitchen with quartz counters&#10;Primary suite with walk-in closet&#10;Solar panels, EV charger&#10;Pool & spa&#10;Top-rated Pleasanton schools&#10;3-car garage"></textarea>
+      <textarea id="l-features" placeholder="Updated kitchen with quartz counters&#10;Primary suite with walk-in closet&#10;Solar panels, EV charger&#10;Pool & spa&#10;Top-rated Pleasanton school[...]
       <label>Tone</label>
       <div class="tone-pills">
         <button class="tone-pill selected" onclick="setTone(this,'l','luxury')">Luxury</button>
@@ -506,7 +510,7 @@ footer {
       </div>
       <div class="section-rule"></div>
       <div class="out-header"><span></span><button class="copy-btn" onclick="copyOut('l-out')">Copy</button></div>
-      <textarea class="output-area" id="l-out" placeholder="Fill in property details and click Generate. Your MLS description, social caption, and email blast will appear here — click to edit." oninput="save('l')"></textarea>
+      <textarea class="output-area" id="l-out" placeholder="Fill in property details and click Generate. Your MLS description, social caption, and email blast will appear here — click to edit."[...]
       <div class="error-box" id="l-err"></div>
     </div>
   </div>
@@ -584,7 +588,7 @@ footer {
       <label>Property Highlights</label>
       <textarea id="c-features" placeholder="Updated kitchen, large lot, pool, ADU, excellent school district" style="min-height:60px;"></textarea>
       <label>Comparable Sales (address, price, date)</label>
-      <textarea id="c-comps" placeholder="1. 4600 Bernal Ave — $1,350,000 — sold 3/2026&#10;2. 4480 Hopyard Rd — $1,295,000 — sold 2/2026&#10;3. 300 Division St — $1,425,000 — sold 4/2026" style="min-height:88px;"></textarea>
+      <textarea id="c-comps" placeholder="1. 4600 Bernal Ave — $1,350,000 — sold 3/2026&#10;2. 4480 Hopyard Rd — $1,295,000 — sold 2/2026&#10;3. 300 Division St — $1,425,000 — sold 4/[...]
       <div class="row2">
         <div><label>Suggested Price</label><input type="text" id="c-price" placeholder="$1,375,000"/></div>
         <div><label>Agent Name</label><input type="text" id="c-agent" placeholder="Your Name"/></div>
@@ -602,7 +606,7 @@ footer {
       </div>
       <div class="section-rule"></div>
       <div class="out-header"><span></span><button class="copy-btn" onclick="copyOut('c-out')">Copy</button></div>
-      <textarea class="output-area" id="c-out" placeholder="Enter property details and comparable sales. Claude will draft a professional CMA letter, executive summary, and talking points — all editable." oninput="save('c')"></textarea>
+      <textarea class="output-area" id="c-out" placeholder="Enter property details and comparable sales. Claude will draft a professional CMA letter, executive summary, and talking points — all[...]
       <div class="error-box" id="c-err"></div>
     </div>
   </div>
@@ -630,7 +634,7 @@ footer {
         </div>
       </div>
       <label>A Special Moment from the Transaction</label>
-      <textarea id="r-moment" placeholder="e.g. They cried happy tears when the seller accepted their offer after being outbid on 4 other homes. First-time buyers." style="min-height:70px;"></textarea>
+      <textarea id="r-moment" placeholder="e.g. They cried happy tears when the seller accepted their offer after being outbid on 4 other homes. First-time buyers." style="min-height:70px;"></tex[...]
       <label>Your Name</label>
       <input type="text" id="r-agent" placeholder="e.g. Natalie Swanson"/>
       <label>Review Link (Google / Zillow)</label>
@@ -651,7 +655,7 @@ footer {
         <div class="status-pill ok" id="r-status" style="display:none"><div class="dot"></div>Scheduled</div>
         <button class="copy-btn" onclick="copyOut('r-out')">Copy</button>
       </div>
-      <textarea class="output-area" id="r-out" placeholder="Enter client details and a personal moment from the transaction. The more specific, the more heartfelt and effective." oninput="save('r')"></textarea>
+      <textarea class="output-area" id="r-out" placeholder="Enter client details and a personal moment from the transaction. The more specific, the more heartfelt and effective." oninput="save('r[...]
       <div class="error-box" id="r-err"></div>
     </div>
   </div>
@@ -794,7 +798,7 @@ async function generateListing() {
     sqft=document.getElementById('l-sqft').value||'2,400 sqft', price=document.getElementById('l-price').value,
     feat=document.getElementById('l-features').value||'Updated kitchen, great schools, large backyard';
   state.l.tabs={mls:'',social:'',email:''};
-  const p=`You are a top real estate copywriter specializing in the Tri-Valley area of California. Write in a ${tones.l} tone.\n\nProperty: ${addr}\n${beds} bed / ${baths} bath, ${sqft}${price?', listed at '+price:''}\nKey features:\n${feat}\n\nGenerate THREE sections with these exact headers:\n\nMLS DESCRIPTION:\n150-200 word MLS listing description. Powerful opening, natural feature highlights, clear call to action.\n\nSOCIAL MEDIA CAPTION:\nUnder 150 words for Instagram/Facebook. 2-3 emojis. 5 hashtags including #TriValley.\n\nEMAIL BLAST:\nFirst line labeled "Subject:" then email body under 200 words. Friendly, compelling, clear call to action.`;
+  const p=`You are a top real estate copywriter specializing in the Tri-Valley area of California. Write in a ${tones.l} tone.\n\nProperty: ${addr}\n${beds} bed / ${baths} bath, ${sqft}${price?',[...]
   const full=await callClaude(p,document.getElementById('l-out'),document.getElementById('l-btn'),'l');
   if(full)store('l',{mls:parse(full,'MLS DESCRIPTION','SOCIAL MEDIA CAPTION')||full,social:parse(full,'SOCIAL MEDIA CAPTION','EMAIL BLAST'),email:parse(full,'EMAIL BLAST',null)},full);
 }
@@ -805,9 +809,9 @@ async function generateFollowup() {
     msg=document.getElementById('f-message').value,agent=document.getElementById('f-agent').value||'Your Agent';
   state.f.tabs={sms:'',email:'',voicemail:''};
   document.getElementById('f-status').style.display='none';
-  const p=`You are a real estate agent in the Tri-Valley area. A new lead just came in. Respond immediately. Be ${tones.f}.\n\nLead: ${name} | Source: ${src} | Looking for: ${prop}\n${msg?'Their message: "'+msg+'"':''}\nYour name: ${agent}\n\nGenerate THREE responses with these exact headers:\n\nSMS TEXT:\nUnder 160 characters. Personal, friendly, references their name and interest. No links.\n\nEMAIL:\nSubject line labeled "Subject:" then a 3-paragraph body: thank them, acknowledge interest, offer next steps. Sign with agent name.\n\nVOICEMAIL SCRIPT:\n20-30 second voicemail. Natural, not salesy. Use [YOUR PHONE] as placeholder.`;
+  const p=`You are a real estate agent in the Tri-Valley area. A new lead just came in. Respond immediately. Be ${tones.f}.\n\nLead: ${name} | Source: ${src} | Looking for: ${prop}\n${msg?'Their [...]
   const full=await callClaude(p,document.getElementById('f-out'),document.getElementById('f-btn'),'f');
-  if(full){store('f',{sms:parse(full,'SMS TEXT','EMAIL')||full,email:parse(full,'EMAIL','VOICEMAIL SCRIPT'),voicemail:parse(full,'VOICEMAIL SCRIPT',null)},full);document.getElementById('f-status').style.display='inline-flex';}
+  if(full){store('f',{sms:parse(full,'SMS TEXT','EMAIL')||full,email:parse(full,'EMAIL','VOICEMAIL SCRIPT'),voicemail:parse(full,'VOICEMAIL SCRIPT',null)},full);document.getElementById('f-status'[...]
 }
 
 async function generateCMA() {
@@ -816,7 +820,7 @@ async function generateCMA() {
     feat=document.getElementById('c-features').value||'Updated home',comps=document.getElementById('c-comps').value||'Comparable sales in the area',
     price=document.getElementById('c-price').value||'to be determined',agent=document.getElementById('c-agent').value||'Your Agent';
   state.c.tabs={letter:'',summary:'',talking:''};
-  const p=`You are a senior real estate agent in the Tri-Valley area preparing a CMA for a seller.\n\nProperty: ${addr} | ${beds}, ${sqft}\nFeatures: ${feat}\nComps:\n${comps}\nSuggested price: ${price}\nPrepared by: ${agent}\n\nGenerate THREE documents with these exact headers:\n\nFULL LETTER:\nProfessional 3-4 paragraph letter starting "Dear Valued Client,". Methodology, comp summary, price justification. Sign with agent name and "Tri-Valley Real Estate Specialist."\n\nEXECUTIVE SUMMARY:\n5 bullet points — one key CMA insight each. Concise and scannable.\n\nTALKING POINTS:\n6 talking points for presenting in person. Include one for handling a seller who thinks their home is worth more.`;
+  const p=`You are a senior real estate agent in the Tri-Valley area preparing a CMA for a seller.\n\nProperty: ${addr} | ${beds}, ${sqft}\nFeatures: ${feat}\nComps:\n${comps}\nSuggested price: $[...]
   const full=await callClaude(p,document.getElementById('c-out'),document.getElementById('c-btn'),'c');
   if(full)store('c',{letter:parse(full,'FULL LETTER','EXECUTIVE SUMMARY')||full,summary:parse(full,'EXECUTIVE SUMMARY','TALKING POINTS'),talking:parse(full,'TALKING POINTS',null)},full);
 }
@@ -829,9 +833,9 @@ async function generateReview() {
     link=document.getElementById('r-links').value||'[REVIEW LINK]';
   state.r.tabs={email:'',sms:'',followup:''};
   document.getElementById('r-status').style.display='none';
-  const p=`You are a real estate agent in the Tri-Valley area. You closed a transaction ${days} days ago. Ask for a review — genuine, warm, personal. Never pushy.\n\nClient: ${client} | Transaction: ${type} for ${prop}\n${moment?'Special moment: '+moment:''}\nAgent: ${agent} | Review link: ${link}\n\nGenerate THREE messages with these exact headers:\n\nEMAIL:\nSubject line labeled "Subject:" then a heartfelt 2-3 paragraph email. Reference the special moment. Gentle ask with the review link.\n\nSMS TEXT:\nUnder 160 characters. Warm and personal. Include the review link or [LINK].\n\nFOLLOW-UP (NO REPLY):\nOne paragraph follow-up for 2 weeks later. Acknowledge they've been busy settling in. Zero pressure.`;
+  const p=`You are a real estate agent in the Tri-Valley area. You closed a transaction ${days} days ago. Ask for a review — genuine, warm, personal. Never pushy.\n\nClient: ${client} | Transac[...]
   const full=await callClaude(p,document.getElementById('r-out'),document.getElementById('r-btn'),'r');
-  if(full){store('r',{email:parse(full,'EMAIL','SMS TEXT')||full,sms:parse(full,'SMS TEXT','FOLLOW-UP'),followup:parse(full,'FOLLOW-UP[^:]*',null)},full);document.getElementById('r-status').style.display='inline-flex';}
+  if(full){store('r',{email:parse(full,'EMAIL','SMS TEXT')||full,sms:parse(full,'SMS TEXT','FOLLOW-UP'),followup:parse(full,'FOLLOW-UP[^:]*',null)},full);document.getElementById('r-status').style[...]
 }
 </script>
 </body>
