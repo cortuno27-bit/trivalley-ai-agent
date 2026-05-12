@@ -4,12 +4,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Tri-Valley AI Agent</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<!-- Theme init — must be first to prevent flash of wrong theme -->
+<script>
+  (function() {
+    var t = localStorage.getItem('tvai-theme') || 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
+
 <!-- Favicon -->
 <link rel="icon" href="/favicon.ico" />
 <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 <link rel="apple-touch-icon" sizes="120x120" href="/apple-touch-icon-120x120.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 <style>
 
 /* ═══════════════════════════════
@@ -426,7 +437,6 @@ footer {
 <header>
   <div class="logo">
     <div class="logo-mark">
-      <!-- House icon -->
       <svg viewBox="0 0 24 24"><path d="M3 10.5L12 3l9 7.5V21a1 1 0 01-1 1H4a1 1 0 01-1-1V10.5z"/><path d="M9 22V12h6v10"/></svg>
     </div>
     <div class="logo-text">
@@ -489,7 +499,7 @@ footer {
         <div><label>List Price</label><input type="text" id="l-price" placeholder="$1,295,000"/></div>
       </div>
       <label>Key Features (one per line)</label>
-      <textarea id="l-features" placeholder="Updated kitchen with quartz counters&#10;Primary suite with walk-in closet&#10;Solar panels, EV charger&#10;Pool & spa&#10;Top-rated Pleasanton school[...]
+      <textarea id="l-features" placeholder="Updated kitchen with quartz counters&#10;Primary suite with walk-in closet&#10;Solar panels, EV charger&#10;Pool & spa&#10;Top-rated Pleasanton schools"></textarea>
       <label>Tone</label>
       <div class="tone-pills">
         <button class="tone-pill selected" onclick="setTone(this,'l','luxury')">Luxury</button>
@@ -510,7 +520,7 @@ footer {
       </div>
       <div class="section-rule"></div>
       <div class="out-header"><span></span><button class="copy-btn" onclick="copyOut('l-out')">Copy</button></div>
-      <textarea class="output-area" id="l-out" placeholder="Fill in property details and click Generate. Your MLS description, social caption, and email blast will appear here — click to edit."[...]
+      <textarea class="output-area" id="l-out" placeholder="Fill in property details and click Generate. Your MLS description, social caption, and email blast will appear here — click to edit." oninput="save('l')"></textarea>
       <div class="error-box" id="l-err"></div>
     </div>
   </div>
@@ -588,7 +598,7 @@ footer {
       <label>Property Highlights</label>
       <textarea id="c-features" placeholder="Updated kitchen, large lot, pool, ADU, excellent school district" style="min-height:60px;"></textarea>
       <label>Comparable Sales (address, price, date)</label>
-      <textarea id="c-comps" placeholder="1. 4600 Bernal Ave — $1,350,000 — sold 3/2026&#10;2. 4480 Hopyard Rd — $1,295,000 — sold 2/2026&#10;3. 300 Division St — $1,425,000 — sold 4/[...]
+      <textarea id="c-comps" placeholder="1. 4600 Bernal Ave — $1,350,000 — sold 3/2026&#10;2. 4480 Hopyard Rd — $1,295,000 — sold 2/2026&#10;3. 300 Division St — $1,425,000 — sold 4/2026"></textarea>
       <div class="row2">
         <div><label>Suggested Price</label><input type="text" id="c-price" placeholder="$1,375,000"/></div>
         <div><label>Agent Name</label><input type="text" id="c-agent" placeholder="Your Name"/></div>
@@ -606,7 +616,7 @@ footer {
       </div>
       <div class="section-rule"></div>
       <div class="out-header"><span></span><button class="copy-btn" onclick="copyOut('c-out')">Copy</button></div>
-      <textarea class="output-area" id="c-out" placeholder="Enter property details and comparable sales. Claude will draft a professional CMA letter, executive summary, and talking points — all[...]
+      <textarea class="output-area" id="c-out" placeholder="Enter property details and comparable sales. Claude will draft a professional CMA letter, executive summary, and talking points — all editable." oninput="save('c')"></textarea>
       <div class="error-box" id="c-err"></div>
     </div>
   </div>
@@ -634,7 +644,7 @@ footer {
         </div>
       </div>
       <label>A Special Moment from the Transaction</label>
-      <textarea id="r-moment" placeholder="e.g. They cried happy tears when the seller accepted their offer after being outbid on 4 other homes. First-time buyers." style="min-height:70px;"></tex[...]
+      <textarea id="r-moment" placeholder="e.g. They cried happy tears when the seller accepted their offer after being outbid on 4 other homes. First-time buyers." style="min-height:70px;"></textarea>
       <label>Your Name</label>
       <input type="text" id="r-agent" placeholder="e.g. Natalie Swanson"/>
       <label>Review Link (Google / Zillow)</label>
@@ -655,7 +665,7 @@ footer {
         <div class="status-pill ok" id="r-status" style="display:none"><div class="dot"></div>Scheduled</div>
         <button class="copy-btn" onclick="copyOut('r-out')">Copy</button>
       </div>
-      <textarea class="output-area" id="r-out" placeholder="Enter client details and a personal moment from the transaction. The more specific, the more heartfelt and effective." oninput="save('r[...]
+      <textarea class="output-area" id="r-out" placeholder="Enter client details and a personal moment from the transaction. The more specific, the more heartfelt and effective." oninput="save('r')"></textarea>
       <div class="error-box" id="r-err"></div>
     </div>
   </div>
@@ -682,12 +692,11 @@ function toggleTheme() {
   localStorage.setItem('tvai-theme', next);
   document.getElementById('theme-label-text').textContent = next === 'dark' ? '☀️' : '🌙';
 }
+
+// Sync emoji with whatever theme is active (set in <head> already)
 (function () {
-  const saved = localStorage.getItem('tvai-theme');
-  if (saved) {
-    document.documentElement.setAttribute('data-theme', saved);
-    document.getElementById('theme-label-text').textContent = saved === 'dark' ? '☀️' : '🌙';
-  }
+  const t = document.documentElement.getAttribute('data-theme');
+  document.getElementById('theme-label-text').textContent = t === 'dark' ? '☀️' : '🌙';
 })();
 
 // ─── STATE ───────────────────────────────
@@ -764,7 +773,6 @@ async function callClaude(prompt, areaEl, btnEl, eg) {
       return '';
     }
 
-    // Extract text from Anthropic response
     const full = data?.content?.map(b => b.text || '').join('') || '';
     areaEl.value = full;
     if (full) areaEl.classList.add('has-content');
@@ -798,7 +806,7 @@ async function generateListing() {
     sqft=document.getElementById('l-sqft').value||'2,400 sqft', price=document.getElementById('l-price').value,
     feat=document.getElementById('l-features').value||'Updated kitchen, great schools, large backyard';
   state.l.tabs={mls:'',social:'',email:''};
-  const p=`You are a top real estate copywriter specializing in the Tri-Valley area of California. Write in a ${tones.l} tone.\n\nProperty: ${addr}\n${beds} bed / ${baths} bath, ${sqft}${price?',[...]
+  const p=`You are a top real estate copywriter specializing in the Tri-Valley area of California. Write in a ${tones.l} tone.\n\nProperty: ${addr}\n${beds} bed / ${baths} bath, ${sqft}${price?', listed at '+price:''}\nKey features:\n${feat}\n\nWrite three pieces of content, each clearly labeled:\n\nMLS DESCRIPTION:\n[250-300 word MLS listing description]\n\nSOCIAL MEDIA CAPTION:\n[Engaging Instagram/Facebook caption with 3-5 hashtags]\n\nEMAIL BLAST:\n[Short email to buyer list, subject line included]`;
   const full=await callClaude(p,document.getElementById('l-out'),document.getElementById('l-btn'),'l');
   if(full)store('l',{mls:parse(full,'MLS DESCRIPTION','SOCIAL MEDIA CAPTION')||full,social:parse(full,'SOCIAL MEDIA CAPTION','EMAIL BLAST'),email:parse(full,'EMAIL BLAST',null)},full);
 }
@@ -809,9 +817,9 @@ async function generateFollowup() {
     msg=document.getElementById('f-message').value,agent=document.getElementById('f-agent').value||'Your Agent';
   state.f.tabs={sms:'',email:'',voicemail:''};
   document.getElementById('f-status').style.display='none';
-  const p=`You are a real estate agent in the Tri-Valley area. A new lead just came in. Respond immediately. Be ${tones.f}.\n\nLead: ${name} | Source: ${src} | Looking for: ${prop}\n${msg?'Their [...]
+  const p=`You are a real estate agent in the Tri-Valley area. A new lead just came in. Respond immediately. Be ${tones.f}.\n\nLead: ${name} | Source: ${src} | Looking for: ${prop}\n${msg?'Their message: '+msg:''}\nYour name: ${agent}\n\nWrite three responses, each clearly labeled:\n\nSMS TEXT:\n[Under 160 chars, warm opener, clear next step]\n\nEMAIL:\n[Subject line + body, personal and concise]\n\nVOICEMAIL SCRIPT:\n[30-second script, natural and friendly]`;
   const full=await callClaude(p,document.getElementById('f-out'),document.getElementById('f-btn'),'f');
-  if(full){store('f',{sms:parse(full,'SMS TEXT','EMAIL')||full,email:parse(full,'EMAIL','VOICEMAIL SCRIPT'),voicemail:parse(full,'VOICEMAIL SCRIPT',null)},full);document.getElementById('f-status'[...]
+  if(full){store('f',{sms:parse(full,'SMS TEXT','EMAIL')||full,email:parse(full,'EMAIL','VOICEMAIL SCRIPT'),voicemail:parse(full,'VOICEMAIL SCRIPT',null)},full);document.getElementById('f-status').style.display='inline-flex';}
 }
 
 async function generateCMA() {
@@ -820,7 +828,7 @@ async function generateCMA() {
     feat=document.getElementById('c-features').value||'Updated home',comps=document.getElementById('c-comps').value||'Comparable sales in the area',
     price=document.getElementById('c-price').value||'to be determined',agent=document.getElementById('c-agent').value||'Your Agent';
   state.c.tabs={letter:'',summary:'',talking:''};
-  const p=`You are a senior real estate agent in the Tri-Valley area preparing a CMA for a seller.\n\nProperty: ${addr} | ${beds}, ${sqft}\nFeatures: ${feat}\nComps:\n${comps}\nSuggested price: $[...]
+  const p=`You are a senior real estate agent in the Tri-Valley area preparing a CMA for a seller.\n\nProperty: ${addr} | ${beds}, ${sqft}\nFeatures: ${feat}\nComps:\n${comps}\nSuggested price: ${price}\nAgent: ${agent}\n\nWrite three documents, each clearly labeled:\n\nFULL LETTER:\n[Professional 3-paragraph CMA letter to the seller]\n\nEXECUTIVE SUMMARY:\n[5-bullet summary of valuation rationale]\n\nTALKING POINTS:\n[5 bullet points to use in the listing presentation]`;
   const full=await callClaude(p,document.getElementById('c-out'),document.getElementById('c-btn'),'c');
   if(full)store('c',{letter:parse(full,'FULL LETTER','EXECUTIVE SUMMARY')||full,summary:parse(full,'EXECUTIVE SUMMARY','TALKING POINTS'),talking:parse(full,'TALKING POINTS',null)},full);
 }
@@ -833,9 +841,9 @@ async function generateReview() {
     link=document.getElementById('r-links').value||'[REVIEW LINK]';
   state.r.tabs={email:'',sms:'',followup:''};
   document.getElementById('r-status').style.display='none';
-  const p=`You are a real estate agent in the Tri-Valley area. You closed a transaction ${days} days ago. Ask for a review — genuine, warm, personal. Never pushy.\n\nClient: ${client} | Transac[...]
+  const p=`You are a real estate agent in the Tri-Valley area. You closed a transaction ${days} days ago. Ask for a review — genuine, warm, personal. Never pushy.\n\nClient: ${client} | Transaction: ${type} | Property: ${prop}\n${moment?'Special moment: '+moment:''}\nYour name: ${agent} | Review link: ${link}\n\nWrite three messages, each clearly labeled:\n\nEMAIL:\n[Subject line + warm personal email asking for a review]\n\nSMS TEXT:\n[Under 160 chars, personal and direct]\n\nFOLLOW-UP:\n[A gentle follow-up message to send 1 week later if no review]`;
   const full=await callClaude(p,document.getElementById('r-out'),document.getElementById('r-btn'),'r');
-  if(full){store('r',{email:parse(full,'EMAIL','SMS TEXT')||full,sms:parse(full,'SMS TEXT','FOLLOW-UP'),followup:parse(full,'FOLLOW-UP[^:]*',null)},full);document.getElementById('r-status').style[...]
+  if(full){store('r',{email:parse(full,'EMAIL','SMS TEXT')||full,sms:parse(full,'SMS TEXT','FOLLOW-UP'),followup:parse(full,'FOLLOW-UP[^:]*',null)},full);document.getElementById('r-status').style.display='inline-flex';}
 }
 </script>
 </body>
